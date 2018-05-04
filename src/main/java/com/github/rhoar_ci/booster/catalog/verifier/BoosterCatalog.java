@@ -12,7 +12,6 @@ public final class BoosterCatalog {
     private BoosterCatalog() {} // avoid instantiation
 
     public static List<Booster> list() throws Exception {
-        // TODO configure catalog URL and ref
         RhoarBoosterCatalogService boosterCatalog = new RhoarBoosterCatalogService.Builder()
                 .filter(KnownRuntimes.INSTANCE)
                 .build();
@@ -28,14 +27,14 @@ public final class BoosterCatalog {
 
         return boosterCatalog.getBoosters()
                 .stream()
-                .flatMap(b -> {
-                    if (b.getEnvironments().isEmpty()) {
-                        return Stream.of(convert(b));
+                .flatMap(booster -> {
+                    if (booster.getEnvironments().isEmpty()) {
+                        return Stream.of(convert(booster));
                     } else {
-                        return b.getEnvironments()
+                        return booster.getEnvironments()
                                 .keySet()
                                 .stream()
-                                .map(env -> convert((RhoarBooster) b.forEnvironment(env)));
+                                .map(env -> convert((RhoarBooster) booster.forEnvironment(env)));
                     }
                 })
                 .collect(Collectors.toList());
