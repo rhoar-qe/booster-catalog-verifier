@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,6 +51,7 @@ public class BoosterCatalogTest {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(workDirPath.resolve("pom.xml").toFile());
         request.setGoals(Arrays.asList("clean", "install"));
+        request.setProfiles(Collections.singletonList("openshift"));
         request.setMavenOpts("-DskipTests=true");
         request.setBatchMode(true);
 
