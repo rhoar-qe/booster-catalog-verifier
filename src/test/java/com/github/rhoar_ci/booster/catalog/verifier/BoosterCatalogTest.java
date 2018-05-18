@@ -1,65 +1,70 @@
 package com.github.rhoar_ci.booster.catalog.verifier;
 
-import org.apache.maven.shared.invoker.*;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
+import org.assertj.core.api.JUnitSoftAssertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@RunWith(Parameterized.class)
 public class BoosterCatalogTest {
-    @Parameters(name = "{0}")
-    public static Iterable<?> data() throws Exception {
-        return BoosterCatalog.list();
-    }
-
     @Rule
     public final TemporaryFolder tmp = new TemporaryFolder();
 
-    @Parameter
-    public Booster booster;
+    @Rule
+    public final JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
     @Test
-    public void cloneAndBuildMavenProject() throws IOException, GitAPIException, MavenInvocationException {
-        System.out.println("====================================================================================================");
-        System.out.println(booster);
-        System.out.println("====================================================================================================");
+    public void verifyBoosterCatalog() throws Exception {
+        Map<String, List<Booster>> catalog = BoosterCatalog.boostersByRuntime();
 
-        File workDir = tmp.newFolder();
-        Path workDirPath = workDir.toPath();
+        ExecutorService executor = Executors.newFixedThreadPool(catalog.size());
+        List<Future<List<Result>>> results = new ArrayList<>();
 
-        Git.cloneRepository()
-                .setURI(booster.gitUrl)
-                .setBranch(booster.gitRef)
-                .setCloneSubmodules(true)
-                .setDirectory(workDir)
-                .call();
+        for (Map.Entry<String, List<Booster>> entry : catalog.entrySet()) {
+            String runtime = entry.getKey();
+            List<Booster> boostersForSingleRuntime = entry.getValue();
 
-        InvocationRequest request = new DefaultInvocationRequest();
-        request.setPomFile(workDirPath.resolve("pom.xml").toFile());
-        request.setGoals(Arrays.asList("clean", "install"));
-        request.setProfiles(Collections.singletonList("openshift"));
-        request.setMavenOpts("-DskipTests=true");
-        request.setBatchMode(true);
+            results.add(executor.submit(
+                    new BoostersForRuntimeVerifier(boostersForSingleRuntime, tmp.newFolder(runtime).toPath())
+            ));
+        }
 
-        Invoker invoker = new DefaultInvoker();
-        InvocationResult result = invoker.execute(request);
+        executor.shutdown();
 
-        assertThat(result.getExitCode())
-                .as("%s should be buildable by `mvn clean install -DskipTests`", booster)
-                .isEqualTo(0);
+        if (executor.awaitTermination(1, TimeUnit.HOURS)) {
+            for (Future<List<Result>> future : results) {
+                List<Result> resultsForRuntime = future.get();
+
+                for (Result result : resultsForRuntime) {
+                    softly.assertThat(result.exception)
+                            .as("No exception when %s expected", result.description)
+                            .isNull();
+
+                    if (result.exception == null) {
+                        softly.assertThat(result.exitCode)
+                                .as("%s should be buildable by `mvn clean install -Popenshift -DskipTests`", result.description)
+                                .isEqualTo(0);
+                        if (result.exitCode != 0) {
+                            softly.fail(""
+                                    + "Maven build log\n"
+                                    + "===============\n"
+                                    + new String(Files.readAllBytes(result.log.toPath()), StandardCharsets.UTF_8)
+                            );
+                        }
+                    }
+                }
+            }
+        } else {
+            softly.fail("Failed to check all boosters in 1 hour");
+        }
     }
 }

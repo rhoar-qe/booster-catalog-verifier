@@ -4,14 +4,17 @@ import io.fabric8.launcher.booster.catalog.rhoar.RhoarBooster;
 import io.fabric8.launcher.booster.catalog.rhoar.RhoarBoosterCatalogService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class BoosterCatalog {
     private BoosterCatalog() {} // avoid instantiation
 
-    public static List<Booster> list() throws Exception {
+    public static Map<String, List<Booster>> boostersByRuntime() throws Exception {
         RhoarBoosterCatalogService boosterCatalog = new RhoarBoosterCatalogService.Builder()
                 .filter(KnownRuntimes.INSTANCE)
                 .build();
@@ -37,7 +40,7 @@ public final class BoosterCatalog {
                                 .map(env -> convert((RhoarBooster) booster.forEnvironment(env)));
                     }
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.groupingBy(Booster::getRuntime));
     }
 
     private static Booster convert(RhoarBooster booster) {
@@ -47,6 +50,6 @@ public final class BoosterCatalog {
         }
         String description = booster.getRuntime().getId() + "/" + booster.getMission().getId()
                 + "/" + booster.getVersion().getId() + environmentDescription;
-        return new Booster(description, booster.getGitRepo(), booster.getGitRef());
+        return new Booster(booster.getRuntime().getId(), description, booster.getGitRepo(), booster.getGitRef());
     }
 }
