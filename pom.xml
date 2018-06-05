@@ -15,11 +15,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <version.io.fabric8.launcher.booster-catalog-service>32</version.io.fabric8.launcher.booster-catalog-service>
+        <version.io.fabric8.launcher.booster-catalog-service>36</version.io.fabric8.launcher.booster-catalog-service>
         <version.junit>4.12</version.junit>
-        <version.org.apache.maven.shared.maven-invoker>3.0.0</version.org.apache.maven.shared.maven-invoker>
+        <version.org.apache.maven.shared.maven-invoker>3.0.1</version.org.apache.maven.shared.maven-invoker>
         <version.org.apache.maven.plugins.maven-surefire-plugin>2.21.0</version.org.apache.maven.plugins.maven-surefire-plugin>
-        <version.org.assertj.assertj-core>3.8.0</version.org.assertj.assertj-core>
+        <version.org.assertj.assertj-core>3.10.0</version.org.assertj.assertj-core>
         <version.org.eclipse.jgit>4.11.0.201803080745-r</version.org.eclipse.jgit>
     </properties>
 
