@@ -37,7 +37,7 @@ public final class BoosterCatalog {
                         return booster.getEnvironments()
                                 .keySet()
                                 .stream()
-                                .map(env -> convert((RhoarBooster) booster.forEnvironment(env)));
+                                .map(env -> convert(booster.forEnvironment(env)));
                     }
                 })
                 .collect(Collectors.groupingBy(Booster::getRuntime));
