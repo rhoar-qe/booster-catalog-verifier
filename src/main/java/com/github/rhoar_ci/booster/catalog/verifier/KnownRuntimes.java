@@ -13,7 +13,7 @@ enum KnownRuntimes implements Predicate<RhoarBooster> { // enum-singleton
     private static final Set<String> KNOWN_RUNTIMES = new HashSet<>(Arrays.asList(
             "spring-boot",
             "vert.x",
-            "wildfly-swarm"
+            "thorntail"
     ));
 
     @Override
