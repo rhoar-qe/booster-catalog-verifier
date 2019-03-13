@@ -16,18 +16,21 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class BoostersForRuntimeVerifier implements Callable<List<Result>> {
     private final List<Booster> boosters;
     private final Path workDir;
-
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+    
     public BoostersForRuntimeVerifier(List<Booster> boosters, Path workDir) {
         this.boosters = boosters;
         this.workDir = workDir;
@@ -57,6 +60,7 @@ public final class BoostersForRuntimeVerifier implements Callable<List<Result>> 
     }
 
     private Result testBooster(Booster booster, File boosterDir, File mavenRepoDir) throws GitAPIException, FileNotFoundException, MavenInvocationException {
+        System.out.println(DATE_FORMAT.format(new Date()));
         System.out.println(""
                 + "====================================================================================================\n"
                 + booster + "\n"
