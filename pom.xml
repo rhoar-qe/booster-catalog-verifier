@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <version.io.fabric8.launcher.booster-catalog-service>48</version.io.fabric8.launcher.booster-catalog-service>
+        <version.io.fabric8.launcher.booster-catalog-service>51</version.io.fabric8.launcher.booster-catalog-service>
         <version.junit>4.12</version.junit>
         <version.org.apache.maven.shared.maven-invoker>3.0.1</version.org.apache.maven.shared.maven-invoker>
         <version.org.apache.maven.plugins.maven-surefire-plugin>2.22.1</version.org.apache.maven.plugins.maven-surefire-plugin>
