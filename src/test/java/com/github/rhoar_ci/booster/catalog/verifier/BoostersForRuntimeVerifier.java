@@ -27,9 +27,10 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class BoostersForRuntimeVerifier implements Callable<List<Result>> {
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
     private final List<Booster> boosters;
     private final Path workDir;
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
     
     public BoostersForRuntimeVerifier(List<Booster> boosters, Path workDir) {
         this.boosters = boosters;
