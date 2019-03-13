@@ -31,7 +31,7 @@ public final class BoostersForRuntimeVerifier implements Callable<List<Result>> 
 
     private final List<Booster> boosters;
     private final Path workDir;
-    
+
     public BoostersForRuntimeVerifier(List<Booster> boosters, Path workDir) {
         this.boosters = boosters;
         this.workDir = workDir;
