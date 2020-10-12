@@ -16,7 +16,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <version.io.fabric8.launcher.booster-catalog-service>61</version.io.fabric8.launcher.booster-catalog-service>
-        <version.junit>4.12</version.junit>
+        <version.junit>4.13.1</version.junit>
         <version.org.apache.maven.shared.maven-invoker>3.0.1</version.org.apache.maven.shared.maven-invoker>
         <version.org.apache.maven.plugins.maven-surefire-plugin>2.22.1</version.org.apache.maven.plugins.maven-surefire-plugin>
         <version.org.assertj.assertj-core>3.11.1</version.org.assertj.assertj-core>
